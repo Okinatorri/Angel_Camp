@@ -247,7 +247,7 @@ def get_qr_code(team_id):
     base_url = request.url_root.rstrip('/')
     url = f"{base_url}/scan/{team_id}"
 
-    qr = qrcode.make(url)
+    qr = qrcode.make(url, image_factory=PilImage)  # ← фикс
     buffer = BytesIO()
     qr.save(buffer, format="PNG")
     buffer.seek(0)
