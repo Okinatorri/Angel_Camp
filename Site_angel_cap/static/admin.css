@@ -1,0 +1,112 @@
+.comand{
+    top: 107px;
+}
+
+
+
+
+.strel_1, .strel_2{
+    position: absolute;
+    width: 34px;
+}
+.strel_2 {
+    top: 50%;
+    left: 10%;
+    transform: translate(-50%, -50%); 
+}
+.strel_1 {
+    top: 50%;
+    left: 90%;
+    transform: translate(-50%, -50%); 
+}
+
+.bals {
+  position: absolute;
+  width: 195px;
+  height: 38px;
+  top: 217px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  background-color: #EFE2FF;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7px;
+}
+
+/* Центральный текст с баллами */
+.bal_2 {
+  font-weight: 600;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+/* Общий стиль для - и + */
+.bal_3, .bal_4 {
+  width: 38px;
+  height: 32px;
+  background: radial-gradient(circle, #896AB4 0%, #684794 80%);
+  color: #fff;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 24px;
+  pointer-events: auto; /* чтобы можно было кликать */
+  user-select: none;
+}
+
+/* Текст внутри */
+.ball_1 {
+    font-size: 38px;
+    line-height: 5px; /* уменьшите, чтобы приподнять символ */
+}
+
+.grafik, .grafick{
+    height: 428px;
+}
+
+.grafik {
+  bottom: 50px;
+  overflow-y: auto;  /* вертикальный скролл */
+  overflow-x: hidden; /* запретить горизонтальный скролл */
+}
+
+@media (max-height: 800px) {
+  .grafik {
+
+    height: 350px;
+  }
+}
+
+@media (max-height: 700px) {
+  .grafik {
+    height: 250px;
+  }
+}
+
+@media (max-height: 600px) {
+  .grafik {
+    height: 150px;
+  }
+}
+
+
+.backgraund {
+  position: fixed; /* или absolute, если нужно относительно родителя */
+  top: 0;
+  left: 0;
+  width: 100vw;  /* ширина окна браузера */
+  height: 100vh; /* высота окна браузера */
+  overflow: hidden;
+  z-index: -1; /* ниже */
+  pointer-events: none;
+  user-select: none;
+  object-fit: cover; /* если фон — img, чтобы заполнить контейнер */
+}
