@@ -1,10 +1,23 @@
 {
   "Вадя": {
-    "password": "123",
+    "password": "AngelCamp",
     "role": "1",
     "is_admin": true,
     "used_qrs": []
   },
+  "Настя": {
+    "password": "AngelCamp",
+    "role": "2",
+    "is_admin": trye,
+    "used_qrs": []
+  },
+  "Кри": {
+      "password": "AngelCamp",
+      "role": "3",
+      "is_admin": trye,
+      "used_qrs": []
+  },
+  
   "user21": {
     "password": "123",
     "role": "1",
