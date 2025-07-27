@@ -8,13 +8,13 @@
   "Настя": {
     "password": "AngelCamp",
     "role": "2",
-    "is_admin": trye,
+    "is_admin": true,
     "used_qrs": []
   },
   "Кри": {
       "password": "AngelCamp",
       "role": "3",
-      "is_admin": trye,
+      "is_admin": true,
       "used_qrs": []
   },
   
