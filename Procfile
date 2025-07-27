@@ -1,1 +1,1 @@
-web: gunicorn Site_angel_cap.app:app
+web: gunicorn Site_angel_cap.app.py:app
