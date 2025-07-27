@@ -25,7 +25,7 @@
   },
   "Ярик": {
     "password": "AngelCamp",
-    "role": "1",
+    "role": "3",
     "is_admin": true,
     "used_qrs": []
   },
