@@ -6,6 +6,8 @@ from io import BytesIO
 
 from flask import Flask, flash ,render_template, redirect, url_for, request, session, jsonify, send_file
 import qrcode
+from qrcode.image.pil import PilImage
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
