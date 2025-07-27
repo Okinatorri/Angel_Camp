@@ -1,0 +1,208 @@
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #684794 inset !important;
+  -webkit-text-fill-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+
+
+html, body, .backgraund {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+body, .backgraund {
+  min-height: 100vh;
+    font-family: 'Handjet', cursive;
+  background: linear-gradient(
+    to bottom,
+    #280655,
+    #411976,
+    #461E7B,
+    #401876,
+    #350772
+);
+}
+
+
+
+.for  {
+  position: absolute;
+  width: 281px;
+  height: 320px;
+  bottom: 176px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 20px;
+  background-color: #EFE2FF;
+}
+
+.nams, .pass {
+    all: unset; /* Убирает ВСЕ стандартные стили кнопки */
+    position: absolute;
+    top: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 217px;
+    height: 38px;
+    border-radius: 10px;
+    background: radial-gradient(circle, #896AB4 0%, #684794 80%);
+      text-align: center;
+    font-family: 'Handjet', cursive;
+    font-weight: 600;
+    font-size: 28px;
+}
+
+.pass {
+  top: 113px;
+}
+
+.red {
+    background: radial-gradient(circle, #D37B7C 0%, #D2292C 80%);
+}
+.blye {
+    background: radial-gradient(circle, #7D6FCD 0%, #232CE0 80%);
+}
+.yeloy {
+    background: radial-gradient(circle, #DAD6A6 0%, #DBCC2C 80%);
+}
+
+.team-buttons button {
+    margin: 5px;
+    padding: 10px 15px;
+    border: 2px solid transparent;
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 206px;
+    left: 50%;
+    transform: translateX(50%);
+    transition: 0.2s;
+}
+
+.team-buttons button.selected {
+    border: 3px solid #896AB4; /* черная обводка */
+    box-shadow: 0 0 1px rgba(255, 255, 255, 0.5); /* легкое свечение */
+}
+
+
+
+.subm {
+    all: unset; /* Убирает ВСЕ стандартные стили кнопки */
+    position: absolute;
+    top: 271px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 217px;
+    height: 38px;
+    border-radius: 10px;
+    background: radial-gradient(circle, #896AB4 0%, #684794 80%);
+
+    text-align: center;
+
+    font-family: 'Handjet', cursive;
+    font-weight: 800;
+    font-size: 32px;
+  
+    color: #ffffff;
+}
+.text1, .text2, .text3 {
+    position: absolute;
+
+    left: 50%;
+    transform: translateX(-50%);
+    width: 257px;
+    height: 38px;
+    margin: 0px;
+    padding: 0px;
+
+    text-align: center;
+
+    font-family: 'Handjet', cursive;
+    font-weight: 800;
+    font-size: 32px;
+  
+    color: #421978;
+}
+.text1 {
+    top: 2px;
+}
+.text2 {
+    top: 75px;
+}
+.text3 {
+    top: 165px;
+}
+
+
+
+
+
+
+  #error-box {
+    color: white;
+    background-color: red;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+.ANGELlogo1w13, .kryg {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 20px;
+  width: 404px;
+  height: 278px;
+  z-index: 10;
+  transition: top 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+
+/* Начинаем уменьшать с 900px */
+@media (max-height: 900px) {
+  .ANGELlogo1w13, .kryg {
+    width: 350px;
+    height: 240px;
+  }
+}
+
+@media (max-height: 800px) {
+  .ANGELlogo1w13, .kryg {
+    width: 300px;
+    height: 200px;
+  }
+}
+
+@media (max-height: 700px) {
+  .ANGELlogo1w13, .kryg {
+    width: 250px;
+    height: 160px;
+  }
+}
+
+@media (max-height: 600px) {
+  .ANGELlogo1w13, .kryg {
+    top: -300px;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+
+
+
+.kryg {
+  width: 240px;
+  height: 240px;
+  top: 50px;
+
+}
