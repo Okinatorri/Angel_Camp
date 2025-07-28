@@ -3,3 +3,4 @@ qrcode==7.4.2
 gunicorn
 pillow
 Flask-SQLAlchemy
+psycopg2-binary
