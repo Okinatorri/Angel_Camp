@@ -229,6 +229,7 @@ def spin():
     return jsonify({'result': result})
 
 
+
 @app.route('/logs')
 def view_logs():
     if 'user' not in session:
@@ -239,17 +240,47 @@ def view_logs():
     if not user or not user.is_admin:
         return "<h1>Доступ запрещён</h1>", 403
 
-    # Получим последние 100 логов
     logs = Log.query.order_by(Log.timestamp.desc()).limit(100).all()
-
     return render_template('logs.html', logs=logs)
 
 
-# Остальные маршруты (QR, update_score, scan_qr, admin_panel, koleso) можно адаптировать аналогично по необходимости
+def load_initial_data():
+    """ Загружает данные из data.json, если база пустая """
+    if not User.query.first():
+        try:
+            with open("users.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            for username, info in data.items():
+                if username == "_team_scores":
+                    for team_id, team_data in info.items():
+                        if not TeamScore.query.filter_by(team_id=team_id).first():
+                            team = TeamScore(
+                                team_id=team_id,
+                                name=team_data["name"],
+                                score=team_data["score"]
+                            )
+                            db.session.add(team)
+                else:
+                    if not User.query.filter_by(username=username).first():
+                        user = User(
+                            username=username,
+                            password=info["password"],
+                            role=info["role"],
+                            is_admin=info["is_admin"]
+                        )
+                        user.set_used_qrs(info.get("used_qrs", []))
+                        db.session.add(user)
+
+            db.session.commit()
+            print("✅ Начальные данные успешно загружены")
+        except Exception as e:
+            print(f"❌ Ошибка при загрузке данных: {e}")
 
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     with app.app_context():
-        db.create_all()  # Создаём таблицы при запуске, если их нет
+        db.create_all()
+        load_initial_data()
     app.run(host='0.0.0.0', port=port, debug=True)
