@@ -4,3 +4,4 @@ gunicorn
 pillow
 Flask-SQLAlchemy
 psycopg2-binary
+requests
