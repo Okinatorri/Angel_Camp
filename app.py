@@ -7,13 +7,32 @@ from io import BytesIO
 from flask import Flask, flash ,render_template, redirect, url_for, request, session, jsonify, send_file
 import qrcode
 from qrcode.image.pil import PilImage
-
+import requests  # Добавляем импорт
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 USERS_FILE = os.path.join(BASE_DIR, 'users.json')
+
+
+# --- Настройки Telegram ---
+TELEGRAM_BOT_TOKEN = '7606062290:AAEbDERnbjw_vYDRLR86nW6AgzxNqeXNBGM'
+TELEGRAM_CHAT_ID = '538881988'
+
+
+def send_telegram_message(text):
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    data = {
+        'chat_id': TELEGRAM_CHAT_ID,
+        'text': text,
+        'parse_mode': 'HTML'
+    }
+    try:
+        resp = requests.post(url, data=data)
+        resp.raise_for_status()
+    except Exception as e:
+        print(f"Ошибка отправки сообщения в Telegram: {e}")
 
 
 # Загрузка/сохранение пользователей
@@ -102,8 +121,6 @@ def login():
 
         users = load_users()
 
-        # --- Ограничение на кол-во в команде ---
-        # Считаем, сколько пользователей уже в этой команде
         team_members_count = sum(1 for u, data in users.items()
                                  if not u.startswith('_') and data.get('role') == role)
 
@@ -111,37 +128,31 @@ def login():
             error = f"В команде {role} уже 35 участников, регистрация закрыта."
             return render_template('login.html', error=error)
 
-        # --- Запрет на создание 2 аккаунтов ---
-        # Если такой username уже есть, проверяем пароль
         if username in users:
             if users[username]['password'] == password:
                 session['user'] = username
+                send_telegram_message(f"👤 Пользователь <b>{username}</b> вошёл в систему.")
                 return redirect('/')
             else:
                 error = 'Неверный пароль'
                 return render_template('login.html', error=error)
 
-        # Проверяем, не зарегистрирован ли пользователь под другим именем (запрет 2 аккаунтов)
-        # Здесь можно проверить, например, по IP или другим данным, если есть.
-        # Но без доп. данных это сложно. Можно добавить в users поле "email" и проверять по нему.
-        # Если у тебя нет email или других идентификаторов, запретить создание другого аккаунта не получится.
-
-        # Для упрощения считаем, что username уникален — этого достаточно
-
-        # Создаем нового пользователя
         users[username] = {'password': password, 'role': role}
         save_users(users)
         session['user'] = username
+        send_telegram_message(f"🆕 Новый пользователь <b>{username}</b> зарегистрировался в команде <b>{role}</b>.")
         return redirect('/')
 
     return render_template('login.html', error=error)
 
 
-
 # Выход
 @app.route('/logout')
 def logout():
+    username = session.get('user')
     session.pop('user', None)
+    if username:
+        send_telegram_message(f"👋 Пользователь <b>{username}</b> вышел из системы.")
     return redirect('/login')
 
 
@@ -178,7 +189,7 @@ def spin():
             verses = []
 
         if verses:
-            verse = random.choice(verses)  # просто строка
+            verse = random.choice(verses)
         else:
             verse = "Стих не найден"
 
@@ -190,6 +201,8 @@ def spin():
         users['_team_scores'][role]['score'] += 1
 
         save_users(users)
+
+        send_telegram_message(f"🎲 Пользователь <b>{username}</b> сделал спин с результатом <b>{result}</b>, выиграл балл и стих:\n{verse}")
 
         return jsonify({
             'result': result,
@@ -205,8 +218,8 @@ def spin():
         users['_team_scores'][role]['score'] += 1
 
     save_users(users)
+    send_telegram_message(f"🎲 Пользователь <b>{username}</b> сделал спин с результатом <b>{result}</b>.")
     return jsonify({'result': result})
-
 
 
 # Колесо (шаблон)
@@ -240,6 +253,7 @@ def update_score():
 
     users['_team_scores'][team_id]['score'] += delta
     save_users(users)
+    send_telegram_message(f"📊 Счёт команды <b>{team_id}</b> обновлён вручную на {delta}. Новый счёт: {users['_team_scores'][team_id]['score']}")
     return jsonify({'new_score': users['_team_scores'][team_id]['score']})
 
 
@@ -249,7 +263,7 @@ def get_qr_code(team_id):
     base_url = request.url_root.rstrip('/')
     url = f"{base_url}/scan/{team_id}"
 
-    qr = qrcode.make(url, image_factory=PilImage)  # ← фикс
+    qr = qrcode.make(url, image_factory=PilImage)
     buffer = BytesIO()
     qr.save(buffer, format="PNG")
     buffer.seek(0)
@@ -270,7 +284,6 @@ def scan_qr(qr_id):
         flash("❌ Пользователь не найден", 'danger')
         return redirect('/')
 
-    # Инициализация полей, если нет
     if 'used_qrs' not in users[user_login]:
         users[user_login]['used_qrs'] = []
 
@@ -285,23 +298,21 @@ def scan_qr(qr_id):
     if user_team not in users['_team_scores']:
         users['_team_scores'][user_team] = {'name': f'Команда {user_team}', 'score': 0}
 
-    # Проверка: уже сканировал этот QR?
     if qr_id in users[user_login]['used_qrs']:
         flash("⚠️ Вы уже использовали этот QR-код!", 'warning')
         return redirect('/')
 
-    # ✅ Увеличиваем балл ТОЛЬКО для команды пользователя
     users['_team_scores'][user_team]['score'] += 1
     users[user_login]['used_qrs'].append(qr_id)
 
     save_users(users)
+
+    send_telegram_message(f"🔍 Пользователь <b>{user_login}</b> сканировал QR <b>{qr_id}</b>. +1 балл команде <b>{users['_team_scores'][user_team]['name']}</b>.")
+
     flash(f"✅ +1 балл команде {users['_team_scores'][user_team]['name']}", 'success')
     return redirect('/')
 
 
-
-
-
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  # на Render будет своя PORT, локально 5000
+    port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
