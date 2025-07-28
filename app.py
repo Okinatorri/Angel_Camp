@@ -309,6 +309,15 @@ def scan_qr(qr_id):
 
     send_telegram_message(f"🔍 Пользователь <b>{user_login}</b> сканировал QR <b>{qr_id}</b>. +1 балл команде <b>{users['_team_scores'][user_team]['name']}</b>.")
 
+    # Отправка общего счёта всех команд
+    all_scores = users.get('_team_scores', {})
+    score_text = "🏆 <b>Общий счёт команд:</b>\n"
+    for team_id, info in all_scores.items():
+        score_text += f"{info['name']}: {info['score']} баллов\n"
+
+    send_telegram_message(score_text)
+
+
     flash(f"✅ +1 балл команде {users['_team_scores'][user_team]['name']}", 'success')
     return redirect('/')
 
