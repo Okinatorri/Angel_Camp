@@ -14,8 +14,17 @@ app.secret_key = os.environ.get("SECRET_KEY", "your_secret_key")
 
 # --- Настройки базы ---
 DATABASE_URL = os.environ.get("DATABASE_URL") or "sqlite:///users.db"
+
+if DATABASE_URL.startswith("postgresql://") and "sslmode" not in DATABASE_URL:
+    if "?" in DATABASE_URL:
+        DATABASE_URL += "&sslmode=require"
+    else:
+        DATABASE_URL += "?sslmode=require"
+
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
 
 db = SQLAlchemy(app)
 
