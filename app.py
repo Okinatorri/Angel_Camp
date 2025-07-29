@@ -253,6 +253,15 @@ def update_score():
 
     users['_team_scores'][team_id]['score'] += delta
     save_users(users)
+
+    # Отправка общего счёта всех команд
+    all_scores = users.get('_team_scores', {})
+    score_text = "🏆 <b>Общий счёт команд:</b>\n"
+    for team_id, info in all_scores.items():
+        score_text += f"{info['name']}: {info['score']} баллов\n"
+
+    send_telegram_message(score_text)
+
     send_telegram_message(f"📊 Счёт команды <b>{team_id}</b> обновлён вручную на {delta}. Новый счёт: {users['_team_scores'][team_id]['score']}")
     return jsonify({'new_score': users['_team_scores'][team_id]['score']})
 
