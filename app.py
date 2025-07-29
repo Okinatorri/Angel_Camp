@@ -238,32 +238,45 @@ def koleso():
                            team_data=team_data)
 
 
-# Обновление счёта вручную (например из JS)
 @app.route('/update_score', methods=['POST'])
 def update_score():
     data = request.get_json()
+
+    # Проверка входных данных
+    if not data or 'team_id' not in data or 'delta' not in data:
+        return jsonify({'error': 'Некорректные данные'}), 400
+
     team_id = str(data['team_id'])
-    delta = int(data['delta'])
+    try:
+        delta = int(data['delta'])
+    except ValueError:
+        return jsonify({'error': 'delta должен быть числом'}), 400
 
     users = load_users()
+
     if '_team_scores' not in users:
         users['_team_scores'] = {}
+
     if team_id not in users['_team_scores']:
         users['_team_scores'][team_id] = {'name': f'Команда {team_id}', 'score': 0}
 
     users['_team_scores'][team_id]['score'] += delta
     save_users(users)
 
-    # Отправка общего счёта всех команд
+    # Сбор общего счёта всех команд
     all_scores = users.get('_team_scores', {})
-    score_text = "🏆 <b>Общий счёт команд:</b>\n"
-    for team_id, info in all_scores.items():
+    score_text = (
+        f"📊 Счёт команды <b>{users['_team_scores'][team_id]['name']}</b> обновлён вручную на {delta}. "
+        f"Новый счёт: {users['_team_scores'][team_id]['score']}\n\n"
+        "🏆 <b>Общий счёт команд:</b>\n"
+    )
+    for tid, info in all_scores.items():
         score_text += f"{info['name']}: {info['score']} баллов\n"
 
     send_telegram_message(score_text)
 
-    send_telegram_message(f"📊 Счёт команды <b>{team_id}</b> обновлён вручную на {delta}. Новый счёт: {users['_team_scores'][team_id]['score']}")
     return jsonify({'new_score': users['_team_scores'][team_id]['score']})
+
 
 
 # QR-код для команды
