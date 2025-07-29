@@ -172,7 +172,7 @@ def spin():
 
     result = random.choices(
         population=[1, 2, 3, 4, 5, 6, 7],
-        weights=[5, 50, 5, 10, 10, 10, 10],
+        weights=[6, 48, 6, 10, 10, 10, 10],
         k=1
     )[0]
 
@@ -216,6 +216,9 @@ def spin():
         if role not in users['_team_scores']:
             users['_team_scores'][role] = {'name': f'Команда {role}', 'score': 0}
         users['_team_scores'][role]['score'] += 1
+    if result == 2:
+        verse = random.choice(verses)
+        return f"Випав результат: {result}. Победа в розыгрыше у саши"
 
     save_users(users)
     send_telegram_message(f"🎲 Пользователь <b>{username}</b> сделал спин с результатом <b>{result}</b>.")
