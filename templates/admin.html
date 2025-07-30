@@ -1,208 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
-<link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Document</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
 </head>
 <body>
-    
-<img class= 'backgraund' src="{{ url_for('static', filename='image/Group1(1).svg') }}" alt="image" />
 
+  <img class='backgraund' src="{{ url_for('static', filename='image/Group1(1).svg') }}" alt="image" />
 
-    <div class="header">
-      <h1 class="name">Вадя Бублик</h1>
-<a href="{{ url_for('login') }}" class="login-button">
-  <img class="login-img" src="{{ url_for('static', filename='image/login1.png') }}" alt="image" />
-</a>
+  <div class="header">
+    <h1 class="name">Вадя Бублик</h1>
+    <a href="{{ url_for('login') }}" class="login-button">
+      <img class="login-img" src="{{ url_for('static', filename='image/login1.png') }}" alt="image" />
+    </a>
+    <img class='logo' src="{{ url_for('static', filename='image/ANGELlogo1w13.png') }}" alt="image" />
+  </div>
 
-      <img class= 'logo' src="{{ url_for('static', filename='image/ANGELlogo1w13.png') }}" alt="image" />
+  <div class="comand">
+    <img id="next-team" class='strel_1' src="{{ url_for('static', filename='image/prav.png') }}" alt="image" />
+    <img id="prev-team" class='strel_2' src="{{ url_for('static', filename='image/lev.png') }}" alt="image" />
+    <h1 class="naz" id="team-name">{{ team_data['1']['name'] }}</h1>
+    <h1 class="bal">«секрет»</h1>
+  </div>
+
+  <div class="bals">
+    <h1 class="bal bal_2" id="pending-count">Відправка: 0 балів</h1>
+    <div id="score-controls">
+      <button id="submit-score" class="submit-score-button">Надіслати</button>
     </div>
 
-    <div class="comand">
-      <img id="next-team" class='strel_1' src="{{ url_for('static', filename='image/prav.png') }}" alt="image" />
-<img id="prev-team" class='strel_2' src="{{ url_for('static', filename='image/lev.png') }}" alt="image" />
-      <h1 class="naz" id="team-name">{{ team_data['1']['name'] }}</h1>
-      <h1 class="bal" >«секрет»</h1>
+    <div class="bal_3" id="decrement-score" style="cursor: pointer;">
+      <h1 class="ball_1">-</h1>
     </div>
 
-
-
-<div class="bals">
-  <h1 class="bal bal_2" id="pending-count">Відправка: 0 балів</h1>
-  <div id="score-controls">
-  <button id="submit-score" class="submit-score-button">Надіслати</button>
-</div>
-
- <div class="bal_3" id="decrement-score" style="cursor: pointer;">
-    <h1 class="ball_1">-</h1>
+    <div class="bal_4" id="increment-score" style="cursor: pointer;">
+      <h1 class="ball_1">+</h1>
+    </div>
   </div>
 
-  <div class="bal_4" id="increment-score" style="cursor: pointer;">
-    <h1 class="ball_1">+</h1>
+  <div class="grafik">
+    <div class="buton">
+      <a href="{{ url_for('index') }}" class="bu_1">     
+        <h1 class="gra_tex_1">Графік</h1>
+      </a>
+      <a href="{{ url_for('admin_panel') }}" class="bu_2">
+        <h1 class="gra_tex_2 gra_tex_2_admin">Адмін панель</h1>
+      </a>
+    </div>
+
+    <div class="grafick" id="team-list">
+      {% for user in teams['1'] %}
+        <div class="team-member team-role-1">
+          <h1 class="gra_tex">{{ user }}</h1>
+          <img class="line" src="{{ url_for('static', filename='image/line1.png') }}" alt="image" />
+        </div>
+      {% endfor %}
+      {% for user in teams['2'] %}
+        <div class="team-member team-role-2" style="display: none;">
+          <h1 class="gra_tex">{{ user }}</h1>
+          <img class="line" src="{{ url_for('static', filename='image/line1.png') }}" alt="image" />
+        </div>
+      {% endfor %}
+      {% for user in teams['3'] %}
+        <div class="team-member team-role-3" style="display: none;">
+          <h1 class="gra_tex">{{ user }}</h1>
+          <img class="line" src="{{ url_for('static', filename='image/line1.png') }}" alt="image" />
+        </div>
+      {% endfor %}
+    </div>
   </div>
-</div>
 
+  <script>
+    const teamData = {{ team_data | tojson }};
+    const teamsCount = 3;
+    let currentTeam;
+    let pendingPoints = 0;
 
+    function updatePendingUI() {
+      document.getElementById('pending-count').innerText = `Відправка: ${pendingPoints} балів`;
+    }
 
-
-
-<div class="grafik">
-
-  <div class="buton">
-    <a href="{{ url_for('index') }}" class="bu_1">     
-      <h1 class="gra_tex_1">Графік</h1>
-    </a>
-
-    <a href="{{ url_for('admin_panel') }}" class="bu_2">
-      <h1 class="gra_tex_2 gra_tex_2_admin">Адмін панель</h1>
-    </a>
-  </div>
-
-  <div class="grafick" id="team-list">
-    {% for user in teams['1'] %}
-      <div class="team-member team-role-1">
-        <h1 class="gra_tex">{{ user }}</h1>
-        <img class="line" src="{{ url_for('static', filename='image/line1.png') }}" alt="image" />
-      </div>
-    {% endfor %}
-
-    {% for user in teams['2'] %}
-      <div class="team-member team-role-2" style="display: none;">
-        <h1 class="gra_tex">{{ user }}</h1>
-        <img class="line" src="{{ url_for('static', filename='image/line1.png') }}" alt="image" />
-      </div>
-    {% endfor %}
-
-    {% for user in teams['3'] %}
-      <div class="team-member team-role-3" style="display: none;">
-        <h1 class="gra_tex">{{ user }}</h1>
-        <img class="line" src="{{ url_for('static', filename='image/line1.png') }}" alt="image" />
-      </div>
-    {% endfor %}
-  </div>
-</div>
-
-
-
-
-
-<script>
-let pendingPoints = 0;
-
-function updatePendingUI() {
-  document.getElementById('pending-count').innerText = `Відправка: ${pendingPoints} балів`;
-}
-
-document.getElementById("increment-score").addEventListener("click", () => {
-  pendingPoints += 1;
-  updatePendingUI();
-});
-
-document.getElementById("decrement-score").addEventListener("click", () => {
-  if (pendingPoints > 0) {
-    pendingPoints -= 1;
-    updatePendingUI();
-  }
-});
-
-document.getElementById("submit-score").addEventListener("click", () => {
-  const currentRole = parseInt(localStorage.getItem("selectedTeam") || "1");
-  if (pendingPoints === 0) return;
-
-  fetch("/update_score", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ team_id: currentRole, delta: pendingPoints })
-  })
-  .then(response => response.json())
-  .then(data => {
-    pendingPoints = 0;
-    updatePendingUI();
-  })
-  .catch(err => console.error("Помилка при надсиланні:", err));
-});
-
-    
-</script>
-<script>
-  const teamData = {{ team_data | tojson }};
-  const teamsCount = 3;
-  let currentTeam;
-
-  function showTeam(teamNumber) {
-  for (let i = 1; i <= teamsCount; i++) {
-    const elements = document.querySelectorAll(`.team-role-${i}`);
-    elements.forEach(el => {
-      el.style.display = (i === teamNumber) ? '' : 'none';
-    });
-  }
-
-  document.getElementById('team-name').innerText = teamData[teamNumber].name;
-
-  // УДАЛИЛИ вот это:
-  // document.getElementById('team-score-main').innerText = teamData[teamNumber].score + ' балов';
-
-  localStorage.setItem("selectedTeam", teamNumber.toString());
-}
-
-
-
-  function updateScore(delta) {
-    const currentRole = parseInt(localStorage.getItem("selectedTeam") || "1");
-
-    fetch("/update_score", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ team_id: currentRole, delta: delta })
-    })
-    .then(response => response.json())
-    .then(data => {
-      teamData[currentRole].score = data.new_score;
-
-
-      const mainScore = document.getElementById("team-score-main");
-      if (mainScore) {
-        mainScore.innerText = data.new_score + " балов";
+    function showTeam(teamNumber) {
+      for (let i = 1; i <= teamsCount; i++) {
+        const elements = document.querySelectorAll(`.team-role-${i}`);
+        elements.forEach(el => {
+          el.style.display = (i === teamNumber) ? '' : 'none';
+        });
       }
-    })
-    .catch(err => console.error("Ошибка при обновлении баллов:", err));
-  }
+      document.getElementById('team-name').innerText = teamData[teamNumber].name;
+      localStorage.setItem("selectedTeam", teamNumber.toString());
+    }
 
-document.addEventListener('DOMContentLoaded', () => {
-  let savedTeam = parseInt(localStorage.getItem("selectedTeam"));
-  if (!savedTeam || savedTeam < 1 || savedTeam > teamsCount) {
-    savedTeam = 1;
-  }
-  currentTeam = savedTeam;
+    document.addEventListener('DOMContentLoaded', () => {
+      let savedTeam = parseInt(localStorage.getItem("selectedTeam"));
+      if (!savedTeam || savedTeam < 1 || savedTeam > teamsCount) {
+        savedTeam = 1;
+      }
+      currentTeam = savedTeam;
+      showTeam(currentTeam);
+      updatePendingUI();
 
-  showTeam(currentTeam);
+      document.getElementById('next-team').addEventListener('click', () => {
+        currentTeam++;
+        if (currentTeam > teamsCount) currentTeam = 1;
+        showTeam(currentTeam);
+      });
 
-  document.getElementById('next-team').addEventListener('click', () => {
-    currentTeam++;
-    if (currentTeam > teamsCount) currentTeam = 1;
-    showTeam(currentTeam);
-  });
+      document.getElementById('prev-team').addEventListener('click', () => {
+        currentTeam--;
+        if (currentTeam < 1) currentTeam = teamsCount;
+        showTeam(currentTeam);
+      });
 
-  document.getElementById('prev-team').addEventListener('click', () => {
-    currentTeam--;
-    if (currentTeam < 1) currentTeam = teamsCount;
-    showTeam(currentTeam);
-  });
+      document.getElementById("increment-score").addEventListener("click", () => {
+        pendingPoints += 1;
+        updatePendingUI();
+      });
 
-  // ❗ Убираем прямой вызов updateScore при +/-
-  // document.getElementById("increment-score").addEventListener("click", () => updateScore(1));
-  // document.getElementById("decrement-score").addEventListener("click", () => updateScore(-1));
-});
-
-</script>
+      document.getElementById("decrement-score").addEventListener("click", () => {
+        pendingPoints -= 1;
+        updatePendingUI();
+      });
 
 
+      document.getElementById("submit-score").addEventListener("click", () => {
+        const currentRole = parseInt(localStorage.getItem("selectedTeam") || "1");
+        if (pendingPoints === 0) return;
 
-
+        fetch("/update_score", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ team_id: currentRole, delta: pendingPoints })
+        })
+        .then(response => response.json())
+        .then(data => {
+          pendingPoints = 0;
+          updatePendingUI();
+        })
+        .catch(err => console.error("Помилка при надсиланні:", err));
+      });
+    });
+  </script>
 </body>
 </html>
