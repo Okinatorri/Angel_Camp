@@ -234,7 +234,7 @@ def koleso():
     users = load_users()
     username = session['user']
     team_data = users.get('_team_scores', {})
-    return render_template('koleso.html',
+    return render_template('index.html',
                            username=username,
                            role=users[username]['role'],
                            is_admin=users[username].get('is_admin', False),
