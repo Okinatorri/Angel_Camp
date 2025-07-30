@@ -27,15 +27,18 @@
       <img id="next-team" class='strel_1' src="{{ url_for('static', filename='image/prav.png') }}" alt="image" />
 <img id="prev-team" class='strel_2' src="{{ url_for('static', filename='image/lev.png') }}" alt="image" />
       <h1 class="naz" id="team-name">{{ team_data['1']['name'] }}</h1>
-      <h1 class="bal" id="team-score-main">{{ team_data['1']['score'] }} балов</h1>
+      <h1 class="bal" >«секрет»</h1>
     </div>
 
 
 
 <div class="bals">
-  <h1 class="bal bal_2" id="team-score-secondary">{{ team_data['1']['score'] }} балов</h1>
+  <h1 class="bal bal_2" id="pending-count">Відправка: 0 балів</h1>
+  <div id="score-controls">
+  <button id="submit-score" class="submit-score-button">Надіслати</button>
+</div>
 
-  <div class="bal_3" id="decrement-score" style="cursor: pointer;">
+ <div class="bal_3" id="decrement-score" style="cursor: pointer;">
     <h1 class="ball_1">-</h1>
   </div>
 
@@ -88,26 +91,66 @@
 
 
 
+<script>
+let pendingPoints = 0;
 
+function updatePendingUI() {
+  document.getElementById('pending-count').innerText = `Готово до відправки: ${pendingPoints} балів`;
+}
+
+document.getElementById("increment-score").addEventListener("click", () => {
+  pendingPoints += 1;
+  updatePendingUI();
+});
+
+document.getElementById("decrement-score").addEventListener("click", () => {
+  if (pendingPoints > 0) {
+    pendingPoints -= 1;
+    updatePendingUI();
+  }
+});
+
+document.getElementById("submit-score").addEventListener("click", () => {
+  const currentRole = parseInt(localStorage.getItem("selectedTeam") || "1");
+  if (pendingPoints === 0) return;
+
+  fetch("/update_score", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ team_id: currentRole, delta: pendingPoints })
+  })
+  .then(response => response.json())
+  .then(data => {
+    pendingPoints = 0;
+    updatePendingUI();
+  })
+  .catch(err => console.error("Помилка при надсиланні:", err));
+});
+
+    
+</script>
 <script>
   const teamData = {{ team_data | tojson }};
   const teamsCount = 3;
   let currentTeam;
 
   function showTeam(teamNumber) {
-    for (let i = 1; i <= teamsCount; i++) {
-      const elements = document.querySelectorAll(`.team-role-${i}`);
-      elements.forEach(el => {
-        el.style.display = (i === teamNumber) ? '' : 'none';
-      });
-    }
-    
-    document.getElementById('team-name').innerText = teamData[teamNumber].name;
-    document.getElementById('team-score-main').innerText = teamData[teamNumber].score + ' балов';
-    document.getElementById('team-score-secondary').innerText = teamData[teamNumber].score + ' балов';
-
-    localStorage.setItem("selectedTeam", teamNumber.toString());
+  for (let i = 1; i <= teamsCount; i++) {
+    const elements = document.querySelectorAll(`.team-role-${i}`);
+    elements.forEach(el => {
+      el.style.display = (i === teamNumber) ? '' : 'none';
+    });
   }
+
+  document.getElementById('team-name').innerText = teamData[teamNumber].name;
+
+  // УДАЛИЛИ вот это:
+  // document.getElementById('team-score-main').innerText = teamData[teamNumber].score + ' балов';
+
+  localStorage.setItem("selectedTeam", teamNumber.toString());
+}
+
+
 
   function updateScore(delta) {
     const currentRole = parseInt(localStorage.getItem("selectedTeam") || "1");
@@ -121,7 +164,6 @@
     .then(data => {
       teamData[currentRole].score = data.new_score;
 
-      document.getElementById("team-score-secondary").innerText = data.new_score + " балов";
 
       const mainScore = document.getElementById("team-score-main");
       if (mainScore) {
@@ -131,30 +173,32 @@
     .catch(err => console.error("Ошибка при обновлении баллов:", err));
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    let savedTeam = parseInt(localStorage.getItem("selectedTeam"));
-    if (!savedTeam || savedTeam < 1 || savedTeam > teamsCount) {
-      savedTeam = 1;
-    }
-    currentTeam = savedTeam;
+document.addEventListener('DOMContentLoaded', () => {
+  let savedTeam = parseInt(localStorage.getItem("selectedTeam"));
+  if (!savedTeam || savedTeam < 1 || savedTeam > teamsCount) {
+    savedTeam = 1;
+  }
+  currentTeam = savedTeam;
 
+  showTeam(currentTeam);
+
+  document.getElementById('next-team').addEventListener('click', () => {
+    currentTeam++;
+    if (currentTeam > teamsCount) currentTeam = 1;
     showTeam(currentTeam);
-
-    document.getElementById('next-team').addEventListener('click', () => {
-      currentTeam++;
-      if (currentTeam > teamsCount) currentTeam = 1;
-      showTeam(currentTeam);
-    });
-
-    document.getElementById('prev-team').addEventListener('click', () => {
-      currentTeam--;
-      if (currentTeam < 1) currentTeam = teamsCount;
-      showTeam(currentTeam);
-    });
-
-    document.getElementById("increment-score").addEventListener("click", () => updateScore(1));
-    document.getElementById("decrement-score").addEventListener("click", () => updateScore(-1));
   });
+
+  document.getElementById('prev-team').addEventListener('click', () => {
+    currentTeam--;
+    if (currentTeam < 1) currentTeam = teamsCount;
+    showTeam(currentTeam);
+  });
+
+  // ❗ Убираем прямой вызов updateScore при +/-
+  // document.getElementById("increment-score").addEventListener("click", () => updateScore(1));
+  // document.getElementById("decrement-score").addEventListener("click", () => updateScore(-1));
+});
+
 </script>
 
 
