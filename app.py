@@ -17,8 +17,8 @@ USERS_FILE = os.path.join(BASE_DIR, 'users.json')
 
 
 # --- Настройки Telegram ---
-TELEGRAM_BOT_TOKEN = '7606062290:AAEbDERnbjw_vYDRLR86nW6AgzxNqeXNBGM'
-TELEGRAM_CHAT_ID = '538881988'
+TELEGRAM_BOT_TOKEN = 'TELEGRAM_BOT_TOKEN '
+TELEGRAM_CHAT_ID = 'TELEGRAM_CHAT_ID'
 
 
 def send_telegram_message(text):
@@ -350,3 +350,4 @@ def scan_qr(qr_id):
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
+
