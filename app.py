@@ -140,7 +140,7 @@ def login():
         users[username] = {'password': password, 'role': role}
         save_users(users)
         session['user'] = username
-        send_telegram_message(f"🆕 Новый пользователь <b>{username}</b> зарегистрировался в команде <b>{role}</b>.")
+        send_telegram_message(f" Новый пользователь <b>{username}</b> зарегистрировался в команде <b>{role}</b>.")
         return redirect('/')
 
     return render_template('login.html', error=error)
@@ -152,7 +152,7 @@ def logout():
     username = session.get('user')
     session.pop('user', None)
     if username:
-        send_telegram_message(f"👋 Пользователь <b>{username}</b> вышел из системы.")
+        send_telegram_message(f" Пользователь <b>{username}</b> вышел из системы.")
     return redirect('/login')
 
 
@@ -202,7 +202,7 @@ def spin():
 
         save_users(users)
 
-        send_telegram_message(f"🎲 Пользователь <b>{username}</b> сделал спин с результатом <b>{result}</b>, выиграл балл и стих:\n{verse}")
+        send_telegram_message(f" Пользователь <b>{username}</b> сделал спин с результатом <b>{result}</b>, выиграл балл и стих:\n{verse}")
 
         return jsonify({
             'result': result,
@@ -221,7 +221,7 @@ def spin():
         return f"Випав результат: {result}. Победа в розыгрыше у саши"
 
     save_users(users)
-    send_telegram_message(f"🎲 Пользователь <b>{username}</b> сделал спин с результатом <b>{result}</b>.")
+    send_telegram_message(f" Пользователь <b>{username}</b> сделал спин с результатом <b>{result}</b>.")
     return jsonify({'result': result})
 
 
@@ -269,9 +269,9 @@ def update_score():
     # Сбор общего счёта всех команд
     all_scores = users.get('_team_scores', {})
     score_text = (
-        f"📊 Счёт команды <b>{users['_team_scores'][team_id]['name']}</b> обновлён вручную на {delta}. "
+        f" Счёт команды <b>{users['_team_scores'][team_id]['name']}</b> обновлён вручную на {delta}. "
         f"Новый счёт: {users['_team_scores'][team_id]['score']}\n\n"
-        "🏆 <b>Общий счёт команд:</b>\n"
+        " <b>Общий счёт команд:</b>\n"
     )
     for tid, info in all_scores.items():
         score_text += f"{info['name']}: {info['score']} баллов\n"
@@ -306,7 +306,7 @@ def scan_qr(qr_id):
     users = load_users()
 
     if user_login not in users:
-        flash("❌ Пользователь не найден", 'danger')
+        flash(" Пользователь не найден", 'danger')
         return redirect('/')
 
     if 'used_qrs' not in users[user_login]:
@@ -317,14 +317,14 @@ def scan_qr(qr_id):
 
     user_team = users[user_login].get('role')
     if not user_team:
-        flash("❌ У пользователя не указана команда", 'danger')
+        flash(" У пользователя не указана команда", 'danger')
         return redirect('/')
 
     if user_team not in users['_team_scores']:
         users['_team_scores'][user_team] = {'name': f'Команда {user_team}', 'score': 0}
 
     if qr_id in users[user_login]['used_qrs']:
-        flash("⚠️ Вы уже использовали этот QR-код!", 'warning')
+        flash(" Вы уже использовали этот QR-код!", 'warning')
         return redirect('/')
 
     users['_team_scores'][user_team]['score'] += 1
@@ -336,18 +336,19 @@ def scan_qr(qr_id):
 
     # Отправка общего счёта всех команд
     all_scores = users.get('_team_scores', {})
-    score_text = "🏆 <b>Общий счёт команд:</b>\n"
+    score_text = " <b>Общий счёт команд:</b>\n"
     for team_id, info in all_scores.items():
         score_text += f"{info['name']}: {info['score']} баллов\n"
 
     send_telegram_message(score_text)
 
 
-    flash(f"✅ +1 балл команде {users['_team_scores'][user_team]['name']}", 'success')
+    flash(f" +1 балл команде {users['_team_scores'][user_team]['name']}", 'success')
     return redirect('/')
 
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
+
 
